@@ -1,5 +1,3 @@
-import { EnvelopeIcon } from '@heroicons/react/16/solid'
-
 interface Props {
   label: string
   name: string
