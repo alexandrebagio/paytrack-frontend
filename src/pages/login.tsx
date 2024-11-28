@@ -1,8 +1,10 @@
 import Input from "@/components/template/Input";
+import http from "@/services/http";
 import { KeyIcon, UserCircleIcon } from "@heroicons/react/16/solid";
 import { useFormik } from "formik";
 import Image from "next/image";
 import Link from "next/link";
+import Router from "next/router";
 import * as yup from 'yup';
 
 export default function Login() {
@@ -10,17 +12,30 @@ export default function Login() {
   const validationSchema = yup.object().shape({
     email: yup.string()
       .required("Campo é obrigatorio")
-      .email("inválido"),
-    password: yup.string()
-      .required("Campo é obrigatorio")
-      .min(3, "Mínimo 3 caracteres")
+      .email("O valor informado é inválido"),
+    password: yup.string().required("Campo é obrigatorio")
   });
 
   const formik = useFormik({
     initialValues: { email: "", password: "" },
     validationSchema,
-    onSubmit: async (values)  => {
-      console.log(values);
+    onSubmit: async (credentials)  => {
+      try {
+        const response = await http.post('/login', credentials);
+        if (response) {
+          Router.push('/');
+        }
+      } catch (error : any) {
+        switch (error.status) {
+          case 409:
+            Router.push('/');
+            break;
+          default:
+            // TODO component snackbars message 
+            console.log(error.response.data.message);
+            break;
+        }
+      }
     },
   });
 
