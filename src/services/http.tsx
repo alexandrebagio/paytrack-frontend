@@ -12,7 +12,7 @@ const http: AxiosInstance = axios.create({
 
 http.interceptors.request.use(async (config) => {
   if ((config.method as string).toLowerCase() !== 'get') {
-    await http.get(process.env.NEXT_PUBLIC_API_URL + '/csrf-cookie').then();
+    await http.get('/csrf-cookie').then();
     const cookies = parse(document.cookie);
     config.headers['X-XSRF-TOKEN'] = cookies["XSRF-TOKEN"] ?? "";
   }
