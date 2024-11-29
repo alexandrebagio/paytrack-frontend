@@ -6,10 +6,32 @@ import { useFormik } from "formik";
 import Image from "next/image";
 import Link from "next/link";
 import Router from "next/router";
+import { useEffect } from "react";
 import * as yup from 'yup';
 
 export default function Login() {
   const addSnackbar = useSnackbar();
+
+  useEffect(() => {
+    const login = async () => {
+      try {
+        await http.post('/login')
+      } catch (error: any) {
+        if (error.status === 409) {
+          addSnackbar({
+            key: "snack-login-sucesso",
+            text: "Login efetuado com sucesso!",
+            variant: "success",
+            icon: CheckCircleIcon,
+            duration: 5000
+          });
+
+          Router.push('/');
+        }
+      }
+    }
+    login();
+  }, []);
 
   const validationSchema = yup.object().shape({
     email: yup.string()
@@ -24,7 +46,7 @@ export default function Login() {
     onSubmit: async (credentials) => {
       try {
         await http.post('/login', credentials);
-
+        
         addSnackbar({
           key: "snack-login-sucesso",
           text: "Login efetuado com sucesso!",
@@ -35,27 +57,13 @@ export default function Login() {
 
         Router.push('/');
       } catch (error: any) {
-        switch (error.status) {
-          case 409:
-            addSnackbar({
-              key: "snack-login-sucesso",
-              text: "Login efetuado com sucesso!",
-              variant: "success",
-              icon: CheckCircleIcon,
-              duration: 5000
-            });
-            Router.push('/');
-            break;
-          default:
-            addSnackbar({
-              key: "snack-login-error",
-              text: error.response.data.message ?? 'Falha ao tentar fazer login, tente novamente mais tarde!',
-              variant: "error",
-              icon: ExclamationCircleIcon,
-              duration: 5000
-            });
-            break;
-        }
+        addSnackbar({
+          key: "snack-login-error",
+          text: error.response.data.message ?? 'Falha ao tentar fazer login, tente novamente mais tarde!',
+          variant: "error",
+          icon: ExclamationCircleIcon,
+          duration: 5000
+        });
       }
     },
   });
