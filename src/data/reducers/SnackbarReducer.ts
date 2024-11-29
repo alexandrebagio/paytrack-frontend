@@ -18,7 +18,7 @@ type TStateType = {
   queue: SnackbarType[];
 };
 
-export default function reducer(
+export default function SnackbarReducer(
   state: TStateType,
   action: TAction
 ): TStateType {

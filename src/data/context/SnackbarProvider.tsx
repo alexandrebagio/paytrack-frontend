@@ -2,8 +2,8 @@
 import Snackbar from "@/components/template/Snackbar";
 import { SnackbarType } from "@/types/SnackbarTypes";
 import { createContext, useReducer, useContext, useCallback } from "react";
-import { TAction } from "../reducers/reducer";
-import reducer from "../reducers/reducer";
+import { TAction } from "../reducers/SnackbarReducer";
+import reducer from "../reducers/SnackbarReducer";
 
 const SnackbarContext = createContext<{
   queue: SnackbarType[];
