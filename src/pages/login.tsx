@@ -1,6 +1,7 @@
 import Input from "@/components/template/Input";
+import { useSnackbar } from "@/data/context/SnackbarProvider";
 import http from "@/services/http";
-import { KeyIcon, UserCircleIcon } from "@heroicons/react/16/solid";
+import { CheckCircleIcon, ExclamationCircleIcon, KeyIcon, UserCircleIcon } from "@heroicons/react/16/solid";
 import { useFormik } from "formik";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,6 +9,7 @@ import Router from "next/router";
 import * as yup from 'yup';
 
 export default function Login() {
+  const addSnackbar = useSnackbar();
 
   const validationSchema = yup.object().shape({
     email: yup.string()
@@ -19,20 +21,39 @@ export default function Login() {
   const formik = useFormik({
     initialValues: { email: "", password: "" },
     validationSchema,
-    onSubmit: async (credentials)  => {
+    onSubmit: async (credentials) => {
       try {
-        const response = await http.post('/login', credentials);
-        if (response) {
-          Router.push('/');
-        }
-      } catch (error : any) {
+        await http.post('/login', credentials);
+
+        addSnackbar({
+          key: "snack-login-sucesso",
+          text: "Login efetuado com sucesso!",
+          variant: "success",
+          icon: CheckCircleIcon,
+          duration: 5000
+        });
+
+        Router.push('/');
+      } catch (error: any) {
         switch (error.status) {
           case 409:
+            addSnackbar({
+              key: "snack-login-sucesso",
+              text: "Login efetuado com sucesso!",
+              variant: "success",
+              icon: CheckCircleIcon,
+              duration: 5000
+            });
             Router.push('/');
             break;
           default:
-            // TODO component snackbars message 
-            console.log(error.response.data.message);
+            addSnackbar({
+              key: "snack-login-error",
+              text: error.response.data.message ?? 'Falha ao tentar fazer login, tente novamente mais tarde!',
+              variant: "error",
+              icon: ExclamationCircleIcon,
+              duration: 5000
+            });
             break;
         }
       }
@@ -59,22 +80,22 @@ export default function Login() {
                 absolute 
                 top-1/2 transform -translate-y-1/2 left-3`}
               />
-            }/>
+            } />
           <Input label="Senha"
             name="password"
             type="password"
             value={values.password}
             placeholder="****"
             onChange={handleChange}
-            error={touched.password ? errors.password : null} 
+            error={touched.password ? errors.password : null}
             icon={
               <KeyIcon className={`pointer-events-none 
                 w-4 h-4 
                 absolute 
                 top-1/2 transform -translate-y-1/2 left-3 `}
               />
-            }/>
-          <button type="submit" 
+            } />
+          <button type="submit"
             className={`p-2 my-4 
               bg-gradient-to-r from-blue-400 to-purple-500
               text-white rounded-full w-full`}> Entrar </button>
