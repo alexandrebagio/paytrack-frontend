@@ -25,12 +25,11 @@ export default function Snackbar({
       return () => clearInterval(interval);
     }, []);
   }
-
+  
   return open ? (
-    <div className="flex absolute h-screen w-screen items-end justify-center">
       <div
-        className={`${variants[variant]} flex h-12 mb-5
-          min-w-[320px] items-center truncate whitespace-nowrap 
+        className={`${variants[variant]} flex fixed top-4 right-4
+          min-w-80 items-center truncate whitespace-nowrap 
           rounded-lg py-3 px-3.5 text-xs text-white shadow-md ${classNameProps}`}
       >
         {Icon && (
@@ -48,6 +47,5 @@ export default function Snackbar({
           </button>
         </div>
       </div>
-    </div>
   ) : null;
 }
