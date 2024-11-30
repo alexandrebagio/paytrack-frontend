@@ -11,25 +11,26 @@ import * as yup from 'yup';
 
 export default function Login() {
   const addSnackbar = useSnackbar();
+  
+  const login = async () => {
+    try {
+      await http.post('/login');
+    } catch (error: any) {
+      if (error.status === 409) {
+        addSnackbar({
+          key: "snack-login-sucesso",
+          text: "Login efetuado com sucesso!",
+          variant: "success",
+          icon: CheckCircleIcon,
+          duration: 5000
+        });
 
-  useEffect(() => {
-    const login = async () => {
-      try {
-        await http.post('/login');
-      } catch (error: any) {
-        if (error.status === 409) {
-          addSnackbar({
-            key: "snack-login-sucesso",
-            text: "Login efetuado com sucesso!",
-            variant: "success",
-            icon: CheckCircleIcon,
-            duration: 5000
-          });
-
-          Router.push('/');
-        }
+        Router.push('/');
       }
     }
+  }
+
+  useEffect(() => {
     login();
   }, []);
 
@@ -43,7 +44,7 @@ export default function Login() {
   const formik = useFormik({
     initialValues: { email: "", password: "" },
     validationSchema,
-    onSubmit: async (credentials) => {
+    onSubmit: async (credentials, {setSubmitting, setFieldError}) => {
       try {
         await http.post('/login', credentials);
         
@@ -57,6 +58,11 @@ export default function Login() {
 
         Router.push('/');
       } catch (error: any) {
+
+        if (error.status === 422) {
+          setFieldError('email', error.response.data.errors.email[0]);
+        }
+
         addSnackbar({
           key: "snack-login-error",
           text: error.response.data.message ?? 'Falha ao tentar fazer login, tente novamente mais tarde!',
@@ -64,6 +70,8 @@ export default function Login() {
           icon: ExclamationCircleIcon,
           duration: 5000
         });
+
+        setSubmitting(false);
       }
     },
   });
