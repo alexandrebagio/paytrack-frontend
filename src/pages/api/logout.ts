@@ -5,15 +5,21 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-
-  // TODO rever processo logout com laravel 
-  res.setHeader("Set-Cookie", serialize("token", "", {
+  res.setHeader("Set-Cookie", serialize("paytrack_session", "", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    expires: new Date(0), // Expira imediatamente
+    sameSite: "lax",
+    expires: new Date(0),
     path: "/",
   }));
 
-  res.status(200).json({ success: true });
+  res.setHeader("Set-Cookie", serialize("XSRF-TOKEN", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    expires: new Date(0),
+    path: "/",
+  }));
+
+  res.status(200).json({ message: "Logout sucessful" });
 }

@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
-import { parse } from "cookie"
+import { parse } from "cookie";
+import Router from "next/router";
 
 const http: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -19,5 +20,18 @@ http.interceptors.request.use(async (config) => {
 
   return config;
 });
+
+http.interceptors.response.use(
+  (response) => response,
+  (error: any) => {
+    switch (error.status) {
+      case 401: // "Unauthenticated."
+        Router.push('/login');
+        break;
+    }
+
+    throw error;
+  }
+);
 
 export default http;

@@ -15,7 +15,7 @@ export default function Login() {
   useEffect(() => {
     const login = async () => {
       try {
-        await http.post('/login')
+        await http.post('/login');
       } catch (error: any) {
         if (error.status === 409) {
           addSnackbar({
@@ -72,7 +72,7 @@ export default function Login() {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-r from-blue-400 to-purple-500">
-      <div className="w-auto md:w-1/3 p-5 rounded-xl bg-gray-50">
+      <div className="w-auto md:w-1/3 xl:w-1/4 p-5 rounded-xl bg-gray-50">
         <h1 className="p-1 text-xl text-center">Paytrack</h1>
         <form onSubmit={handleSubmit} noValidate>
           <Input label="E-mail"
